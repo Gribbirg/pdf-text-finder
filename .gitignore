@@ -1,0 +1,6 @@
+source
+output
+ocr_cache.json
+.venv
+.idea
+*.iml
