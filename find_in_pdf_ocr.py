@@ -7,6 +7,7 @@ import shutil
 import sys
 import time
 import hashlib
+import tempfile
 import functools
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -15,6 +16,15 @@ import pytesseract
 
 # Unbuffered output
 print = functools.partial(print, flush=True)
+
+# Use a project-local temp dir. Tesseract is spawned as a subprocess and on some
+# systems (sandboxed macOS) it can't read files written to the system /tmp, which
+# made pytesseract fail silently on every page. Keeping temp files inside the
+# project sidesteps that. Runs at import so ProcessPoolExecutor workers inherit it.
+TMP_DIR = Path(__file__).resolve().parent / ".ocr_tmp"
+TMP_DIR.mkdir(exist_ok=True)
+os.environ["TMPDIR"] = str(TMP_DIR)
+tempfile.tempdir = str(TMP_DIR)
 
 parser = argparse.ArgumentParser(description="Search text in PDF files via OCR")
 parser.add_argument("query", help="Search query")

@@ -1,6 +1,8 @@
 source
 output
 ocr_cache.json
+.ocr_tmp
 .venv
 .idea
 *.iml
+.DS_Store
